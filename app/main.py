@@ -103,3 +103,16 @@ def analytics_summary(db: Session = Depends(get_db)):
     daily_counts = [{"date": str(d), "count": c} for d, c in daily_rows]
 
     return {"by_sentiment": by_sentiment, "by_product": by_product, "daily_counts": daily_counts}
+    @app.post("/seed")
+def seed_data(db: Session = Depends(database.get_db)):
+    from . import models
+    sample = [
+        models.Feedback(product="App", sentiment="positive", comment="Great app!"),
+        models.Feedback(product="App", sentiment="negative", comment="Needs work"),
+        models.Feedback(product="Website", sentiment="positive", comment="Nice UI"),
+    ]
+    db.add_all(sample)
+    db.commit()
+    return {"message": "Sample data added"}
+
+
