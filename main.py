@@ -21,3 +21,19 @@ app.add_middleware(
 @app.get("/")
 def read_root():
     return {"message": "Backend is working!"}
+    from fastapi import Depends
+from sqlalchemy.orm import Session
+from . import models, database
+
+@app.post("/seed")
+def seed_data(db: Session = Depends(database.get_db)):
+    sample = [
+        models.Feedback(product="App", sentiment="positive", comment="Great app!"),
+        models.Feedback(product="App", sentiment="negative", comment="Needs improvement"),
+        models.Feedback(product="Website", sentiment="positive", comment="Nice UI"),
+    ]
+    db.add_all(sample)
+    db.commit()
+    return {"message": "Sample data added"}
+
+
